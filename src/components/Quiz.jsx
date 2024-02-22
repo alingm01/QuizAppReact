@@ -1,11 +1,25 @@
 import { useState } from "react"
 import QUESTIONS from '../../question';
+import completedLogo from '../assets/quiz-complete.png';
 
 export default function Quiz() {
   const [userAnswers, setUserAnswers] = useState([]);
-  const userAnswerIndex = userAnswers.length;
 
-  function handleClick(answer) {
+  const activeQuestionIndex = userAnswers.length;
+  const QuizCompleted = activeQuestionIndex === QUESTIONS.length;
+
+  if (QuizCompleted) {
+    return (
+      <div id="summary">
+        <img src={completedLogo} alt="completed quiz trophy" />
+        <h2>Quiz Completed</h2>
+      </div>
+    )
+  }
+  const answers = [...QUESTIONS[activeQuestionIndex].answers];
+  const shuffledAnswers = answers.sort(()=>Math.random - 0.5)
+
+  function handleSelectAnswer(answer) {
     setUserAnswers((prevAnswers) => {
       return [...prevAnswers, answer];
     })
@@ -14,11 +28,11 @@ export default function Quiz() {
   return (
     <div id="quiz">
       <div>
-        <h2 id="question">{QUESTIONS[userAnswerIndex].text}</h2>
+        <h2 id="question">{QUESTIONS[activeQuestionIndex].text}</h2>
         <ul id="answers">
-          {QUESTIONS[userAnswerIndex].answers.map(answer => (
+          {shuffledAnswers.map(answer => (
             <li key={answer} className="answer">
-              <button  onClick={() => handleClick(answer)}>{answer}</button>
+              <button  onClick={() => handleSelectAnswer(answer)}>{answer}</button>
             </li>
           ))}
         </ul>
