@@ -9,11 +9,20 @@ export default function Question({
   onSkipAnswer
 }) {
 
-  console.log(QUESTIONS)
   const [answer, setAnswer] = useState({
     selectedAnswer: '',
     isCorrect: null
   });
+
+  let timer = 10000;
+
+  if (answer.selectedAnswer) {
+    timer = 1000;
+  } 
+
+  if (answer.isCorrect !== null) {
+    timer = 2000;
+  }
 
   function handleSelectAnswer(answer) {
     setAnswer({
@@ -35,15 +44,19 @@ export default function Question({
 
   let answerState = '';
 
-  if (answer.selectedAnswer) {
+  if (answer.selectedAnswer && answer.isCorrect !== null) {
     answerState = answer.isCorrect ? 'correct' : 'wrong';
+  } else if (answer.selectedAnswer) {
+    answerState = 'answered';
   }
-
+ 
   return (
     <div id="question">
       <QuestionTimer 
-        timeout={10000} 
-        onTimeout={onSkipAnswer}
+        key={timer}
+        timeout={timer} 
+        onTimeout={answer.selectedAnswer === '' ? onSkipAnswer : null}
+        mode={answerState}
       />
       <h2 id="question">{QUESTIONS[index].text}</h2>
       <Answers 
